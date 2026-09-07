@@ -28,23 +28,116 @@
 
 # ---------------------------------------------------------------------
 
-name: Github Actions로 테스트 자동화하기
-on: push
+# name: Github Actions로 테스트 자동화하기
+# on: push
+
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Github Repository 불러오기
+#         uses: actions/checkout@v6
+
+#       - name: Node.js 설치하기
+#         uses: actions/setup-node@v6
+#         with:
+#           node-version: "24"
+#           cache: "npm"
+
+#       - name: 의존성(라이브러리) 설치
+#         run: npm ci
+
+#       - name: 테스트 실행하기
+#         run: npm run test
+
+# ---------------------------------------------------------------------
+
+# name: Github Actions로 작업 병렬로 실행하기
+# on: push
+
+# jobs:
+#   first_job:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: 첫 번째 작업의 1단계
+#         run: echo "첫 번째 작업의 첫 번째 단계입니다."
+#       - name: 첫 번째 작업의 2단계
+#         run: echo "첫 번째 작업의 두 번째 단계입니다."
+
+#   second_job:
+#     runs-on: ubuntu-latest
+#     needs: first_job
+#     steps:
+#       - name: 두 번째 작업의 1단계
+#         run: echo "두 번째 작업의 첫 번째 단계입니다."
+#       - name: 두 번째 작업의 2단계
+#         run: echo "두 번째 작업의 두 번째 단계입니다."
+
+# ---------------------------------------------------------------------
+
+# name: output 연습
+# on: push
+
+# jobs:
+#   create-output:
+#     runs-on: ubuntu-latest
+#     # 현재 job의 step 중에 save-output이라는 id를 가진 step의
+#     # output의 키가 message인 값을 abc라는 이름으로 내보내기 할거야.
+#     outputs:
+#       abc: ${{ steps.save-output.outputs.message }}
+#     steps:
+#       - name: output 저장
+#         id: save-output
+#         run: echo "message=안녕" >> $GITHUB_OUTPUT
+
+#       - name: output 사용
+#         run: echo "저장된 키는 ${{ steps.save-output.outputs.message }}입니다."
+
+#   use-output:
+#     runs-on: ubuntu-latest
+#     # 위의 job(create-output)에서 만든 outputs를 해당 job(use-output)에서 사용하기 위해선
+#     # 위 job(create-output)이 실패하면 안되기 때문에 needs가 필요합니다.
+#     needs: create-output
+#     steps:
+#       - name: output 사용
+#         run: echo "이 job에서 사용할 output은 ${{ needs.create-output.outputs.abc }}입니다."
+
+# ---------------------------------------------------------------------
+
+# name: if 조건 연습
+# on:
+#   push:
+#     branches:
+#       - develop
+#       - main
+
+# jobs:
+#   if-test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: 테스트 실행
+#         id: run-tests
+#         # exit 1으로 실패시키기
+#         run: |
+#           echo "실패한 경우"
+#           exit 1
+
+#       - name: 테스트 실패 알림 (예시. 슬랙 혹은 디스코드)
+#         if: failure() # 이전 스텝이 실패했을 때만 실행
+#         run: |
+#           echo "테스트 실패 알림을 보내는 로직을 구현"
+
+# ---------------------------------------------------------------------
+
+name: 스케줄 작업
+on:
+  schedule:
+    # 매일 자정(UTC)에 실행
+    - cron: "0 0 * * *"
 
 jobs:
-  test:
+  scheduled-job:
     runs-on: ubuntu-latest
     steps:
-      - name: Github Repository 불러오기
-        uses: actions/checkout@v6
-
-      - name: Node.js 설치하기
-        uses: actions/setup-node@v6
-        with:
-          node-version: "24"
-
-      - name: 의존성(라이브러리) 설치
-        run: npm ci
-
-      - name: 테스트 실행하기
-        run: npm run test
+      - name: 정기 작업 실행
+        run: echo "스케줄에 따라 실행되는 작업입니다."
